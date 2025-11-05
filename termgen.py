@@ -2,10 +2,17 @@ import random
 import argparse
 
 def generate(n_nodes: int, n_inputs: int, operators: list[tuple[str, int]]):
+    consts = [op for op, arity in operators if arity == 0]
+    operators = [(op, arity) for op, arity in operators if arity != 0]
+
     def recurse(n: int):
         if n == 0:
-            input = random.choice(range(n_inputs))
-            return f'v{input}'
+            if consts and random.choice([True, False]):
+                return '(' + random.choice(consts) + ')'
+            else:
+                input = random.choice(range(n_inputs))
+                return f'v{input}'
+
         else:
             op, arity = random.choice(operators)
             sub = ()
@@ -30,3 +37,4 @@ ops = [ (f.strip(), int(a.strip())) for f, a in ops ]
 res = generate(args.nodes, args.inputs, ops)
 res = str(res).replace(',', '').replace(r"'", '')
 print(res)
+
